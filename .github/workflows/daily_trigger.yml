@@ -30,11 +30,12 @@ jobs:
       - name: Call Dify Workflow API
         if: env.RUN_JOB == 'true'
         run: |
-          curl -X POST https://api.dify.ai/v1/workflows/run \
+          curl -X POST https://api.dify.ai/v1/chat-messages \
             -H "Authorization: Bearer ${{ secrets.DIFY_API_KEY }}" \
             -H "Content-Type: application/json" \
             -d '{
               "inputs": {},
+              "query": "Запусти сценарий",
               "response_mode": "blocking",
               "user": "github_cron_1601"
             }'
