@@ -1,0 +1,36 @@
+name: Daily Dify Trigger
+
+on:
+  schedule:
+    # Запускаем в 06:00 UTC (09:00 по Киеву летом) и в 07:00 UTC (09:00 по Киеву зимой)
+    - cron: '0 13 * * *'
+    - cron: '0 14 * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger_dify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check Europe/Kyiv Local Time
+        id: check_time
+        run: |
+          # Получаем текущий час в часовом поясе Киева
+          KIEV_HOUR=$(TZ="Europe/Kyiv" date +%H)
+          echo "Current Kyiv hour: $KIEV_HOUR"
+          if [ "$KIEV_HOUR" -eq "09" ]; then
+            echo "RUN_JOB=true" >> $GITHUB_ENV
+          else
+            echo "RUN_JOB=false" >> $GITHUB_ENV
+          fi
+
+      - name: Call Dify Workflow API
+        if: env.RUN_JOB == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          curl -X POST https://api.dify.ai/v1/workflows/run \
+            -H "Authorization: Bearer ${{ secrets.DIFY_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "inputs": {},
+              "response_mode": "blocking",
+              "user": "github_cron"
+            }'
