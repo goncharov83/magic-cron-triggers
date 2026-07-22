@@ -1,9 +1,10 @@
-name: Daily Dify Trigger
+name: Dify Daily Trigger (16:01 Kyiv)
 
 on:
   schedule:
-    # Запускаем в 06:00 UTC (09:00 по Киеву летом) и в 07:00 UTC (09:00 по Киеву зимой)
+    # 13:01 UTC = 16:01 Kyiv (EEST, UTC+3)
     - cron: '0 13 * * *'
+    # 14:01 UTC = 16:01 Kyiv (EET, UTC+2)
     - cron: '0 14 * * *'
   workflow_dispatch:
 
@@ -14,17 +15,20 @@ jobs:
       - name: Check Europe/Kyiv Local Time
         id: check_time
         run: |
-          # Получаем текущий час в часовом поясе Киева
           KIEV_HOUR=$(TZ="Europe/Kyiv" date +%H)
           echo "Current Kyiv hour: $KIEV_HOUR"
-          if [ "$KIEV_HOUR" -eq "09" ]; then
+          
+          # Если запуск РУЧНОЙ (workflow_dispatch) ИЛИ время 16 часов по Киеву
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$KIEV_HOUR" -eq "16" ]; then
             echo "RUN_JOB=true" >> $GITHUB_ENV
+            echo "Condition met: Triggering Dify API."
           else
             echo "RUN_JOB=false" >> $GITHUB_ENV
+            echo "Condition not met: Skipping Dify API call."
           fi
 
       - name: Call Dify Workflow API
-        if: env.RUN_JOB == 'true' || github.event_name == 'workflow_dispatch'
+        if: env.RUN_JOB == 'true'
         run: |
           curl -X POST https://api.dify.ai/v1/workflows/run \
             -H "Authorization: Bearer ${{ secrets.DIFY_API_KEY }}" \
@@ -32,5 +36,5 @@ jobs:
             -d '{
               "inputs": {},
               "response_mode": "blocking",
-              "user": "github_cron"
+              "user": "github_cron_1601"
             }'
