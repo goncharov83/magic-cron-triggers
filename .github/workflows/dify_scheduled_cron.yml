@@ -1,0 +1,13 @@
+name: Dify Scheduled Cron
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger_dify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Test
+        run: echo "Cron index test"
