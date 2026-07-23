@@ -2,40 +2,23 @@ name: Dify Daily Trigger (16:01 Kyiv)
 
 on:
   schedule:
-    # 13:01 UTC = 16:01 Kyiv (EEST, UTC+3)
-    - cron: '0 13 * * *'
-    # 14:01 UTC = 16:01 Kyiv (EET, UTC+2)
-    - cron: '0 14 * * *'
+    # 13:01 UTC = 16:01 EEST (Киевское летнее время)
+    - cron: '1 21 * * *'
   workflow_dispatch:
 
 jobs:
   trigger_dify:
     runs-on: ubuntu-latest
     steps:
-      - name: Check Europe/Kyiv Local Time
-        id: check_time
-        run: |
-          KIEV_HOUR=$(TZ="Europe/Kyiv" date +%H)
-          echo "Current Kyiv hour: $KIEV_HOUR"
-          
-          # Если запуск РУЧНОЙ (workflow_dispatch) ИЛИ время 16 часов по Киеву
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || [ "$KIEV_HOUR" -eq "16" ]; then
-            echo "RUN_JOB=true" >> $GITHUB_ENV
-            echo "Condition met: Triggering Dify API."
-          else
-            echo "RUN_JOB=false" >> $GITHUB_ENV
-            echo "Condition not met: Skipping Dify API call."
-          fi
-
       - name: Call Dify Workflow API
-        if: env.RUN_JOB == 'true'
         run: |
-          curl -X POST https://api.dify.ai/v1/chat-messages \
-            -H "Authorization: Bearer ${{ secrets.DIFY_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{
-              "inputs": {},
-              "query": "Запусти сценарий",
-              "response_mode": "blocking",
-              "user": "github_cron_1601"
+          echo "Triggering Dify API at 16:01 Kyiv time..."
+          curl -X POST 'https://api.dify.ai/v1/chat-messages' \
+            --header 'Authorization: Bearer ${{ secrets.DIFY_API_KEY }}' \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+                "inputs": {},
+                "query": "run_export",
+                "response_mode": "blocking",
+                "user": "github_action"
             }'
