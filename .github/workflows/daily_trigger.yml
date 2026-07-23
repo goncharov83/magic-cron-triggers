@@ -1,8 +1,7 @@
-name: Dify Daily Trigger (16:01 Kyiv)
+name: Dify Daily Trigger (00:01 Kyiv)
 
 on:
   schedule:
-    # 13:01 UTC = 16:01 EEST (Киевское летнее время)
     - cron: '1 21 * * *'
   workflow_dispatch:
 
@@ -12,7 +11,7 @@ jobs:
     steps:
       - name: Call Dify Workflow API
         run: |
-          echo "Triggering Dify API at 16:01 Kyiv time..."
+          echo "Triggering Dify API at 00:01 Kyiv time..."
           curl -X POST 'https://api.dify.ai/v1/chat-messages' \
             --header 'Authorization: Bearer ${{ secrets.DIFY_API_KEY }}' \
             --header 'Content-Type: application/json' \
