@@ -1,9 +1,9 @@
 name: Dify Cron Trigger
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '1 21 * * *'
-  workflow_dispatch:
 
 jobs:
   trigger_dify:
