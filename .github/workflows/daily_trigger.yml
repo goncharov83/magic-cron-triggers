@@ -9,9 +9,9 @@ jobs:
   trigger_dify:
     runs-on: ubuntu-latest
     steps:
-      - name: Call Dify Workflow API
+      - name: Call Dify API
         run: |
-          echo "Triggering Dify API at 00:01 Kyiv time..."
+          echo "Triggering Dify..."
           curl -X POST 'https://api.dify.ai/v1/chat-messages' \
             --header 'Authorization: Bearer ${{ secrets.DIFY_API_KEY }}' \
             --header 'Content-Type: application/json' \
