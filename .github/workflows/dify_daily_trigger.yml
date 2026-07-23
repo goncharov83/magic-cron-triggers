@@ -1,4 +1,4 @@
-name: Dify Daily Trigger (00:01 Kyiv)
+name: Dify Cron Trigger
 
 on:
   schedule:
