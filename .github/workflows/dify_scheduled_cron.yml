@@ -3,7 +3,7 @@ name: Dify Cron Trigger
 on:
   workflow_dispatch:
   schedule:
-    - cron: '1 21 * * *'
+    - cron: '30 19 * * *'
 
 jobs:
   trigger_dify:
